@@ -1,5 +1,12 @@
 #pragma once
-#include <iostream>
-#include <fstream>
+#include "Utils.hpp"
 
-#include <cstdint>
+namespace fs = std::filesystem;
+
+class FileLogger {
+
+public:
+	FileLogger(fs::path path_to_log_file);
+private:
+	std::ofstream log_file;
+};
