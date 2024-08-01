@@ -1,6 +1,11 @@
 #include "FileLogger.hpp"
+#include "Log.hpp"
 
-std::string parse_cli_arguments(int argc, char* argv[]) {
+
+std::chrono::system_clock::time_point start_time{};
+
+
+std::string get_log_file_name(int argc, char* argv[]) {
 	std::string ret{ "log.txt" };
 	std::regex cli_parser("--file=([A-Za-z0-9_-]*)+\\.txt");
 	
@@ -23,9 +28,21 @@ std::string parse_cli_arguments(int argc, char* argv[]) {
 
 
 int main(int argc,char* argv[]) {
+	using enum SeverityLevels;
+#ifdef _WIN32
+	WinConsoleColor::activateVirtualTerminal();
+#endif
+	start_time = std::chrono::system_clock::now();
+	file_logger = new FileLogger{ get_log_file_name(argc, argv)};
+	Log<TRACE>("this is a trace message");
+	Log<DEBUG>("this is a debug message");
+	Log<INFO>("this is an info message");
+	Log<WARNING>("this is a warning message");
+	Log<FATAL>("this is a fatal message");
 
-	FileLogger file_logger{ parse_cli_arguments(argc, argv) };
-
-
+	std::this_thread::sleep_for(1s);
+	int limit = 250;
+	int actual = 12;
+	Log<FATAL>(std::format("Expected value greater than {}: got {}",limit,actual));
 	return 0;
 }
